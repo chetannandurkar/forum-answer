@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Social Media Platform</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        main {
+            padding: 20px;
+            overflow: hidden;
+        }
+        .page {
+            display: none;
+            transition: opacity 0.5s ease;
+        }
+        .page.active {
+            display: block;
+            opacity: 1;
+        }
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background: #f4f4f4;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            nav ul {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>My Social Media</h1>
+    <nav>
+        <ul>
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#profile">Profile</a></li>
+            <li><a href="#messages">Messages</a></li>
+            <li><a href="#settings">Settings</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main id="content">
+    <section id="home" class="page active">
+        <h2>Home</h2>
+        <p>Welcome to the home page!</p>
+    </section>
+    <section id="profile" class="page">
+        <h2>Profile</h2>
+        <p>This is your profile page.</p>
+    </section>
+    <section id="messages" class="page">
+        <h2>Messages</h2>
+        <p>Check your messages here.</p>
+    </section>
+    <section id="settings" class="page">
+        <h2>Settings</h2>
+        <p>Adjust your settings here.</p>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 My Social Media Platform</p>
+</footer>
+
+<script>
+    const navLinks = document.querySelectorAll('nav ul li a');
+    const pages = document.querySelectorAll('.page');
+    const content = document.getElementById('content');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = e.target.getAttribute('href').substring(1);
+
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            document.getElementById(target).classList.add('active');
+            e.target.classList.add('active');
+        });
+    });
+
+    // Swipe Navigation
+    let startX;
+
+    content.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+    });
+
+    content.addEventListener('touchmove', (e) => {
+        if (!startX) return;
+        const currentX = e.touches[0].clientX;
+
+        if (startX - currentX > 50) {
+            navigateTo('next');  // Swipe left
+        } else if (currentX - startX > 50) {
+            navigateTo('prev');  // Swipe right
+        }
+
+        startX = null;
+    });
+
+    function navigateTo(direction) {
+        const currentActive = document.querySelector('.page.active');
+        let nextPage;
+
+        if (direction === 'next') {
+            nextPage = currentActive.nextElementSibling;
+        } else if (direction === 'prev') {
+            nextPage = currentActive.previousElementSibling;
+        }
+
+        if (nextPage && nextPage.classList.contains('page')) {
+            currentActive.classList.remove('active');
+            nextPage.classList.add('active');
+
+            // Update the active nav link
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === nextPage.id) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
